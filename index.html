@@ -112,7 +112,7 @@
     <!-- Products Page -->
     <div id="products-page" class="page">
         <section class="products">
-            <div class="container">
+            <div class="container products-layout">
                 <h2>🛍️ Ürünlerimiz</h2>
                 
                 <!-- Category Filter -->
@@ -122,13 +122,55 @@
                     <button class="category-btn" onclick="filterProducts('accessories')">Aksesuarlar</button>
                 </div>
 
-                <!-- Search Bar -->
-                <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="🔍 Ürün ara..." onkeyup="searchProducts()">
-                </div>
+                <div class="products-main">
+                    <!-- Facet Panel -->
+                    <aside class="facets-panel" id="facetsPanel">
+                        <h3>Filtreler</h3>
 
-                <div class="products-grid" id="productsGrid">
-                    <!-- Ürünler JS tarafından yüklenecek -->
+                        <div class="facets-section">
+                            <h4>Marka</h4>
+                            <div id="facet-brand"></div>
+                        </div>
+
+                        <div class="facets-section">
+                            <h4>Fiyat</h4>
+                            <div class="price-range">
+                                <input type="number" id="priceMin" placeholder="Min" />
+                                <input type="number" id="priceMax" placeholder="Max" />
+                                <button class="btn-secondary" id="priceApply">Uygula</button>
+                            </div>
+                        </div>
+
+                        <div class="facets-section">
+                            <h4>Puan</h4>
+                            <div id="facet-rating">
+                                <label><input type="checkbox" value="4" /> 4+ ⭐</label><br/>
+                                <label><input type="checkbox" value="3" /> 3+ ⭐</label>
+                                <label><input type="checkbox" value="2" /> 2+ ⭐</label>
+                            </div>
+                        </div>
+
+                        <div class="facets-section" id="attributesSection" style="display:none;">
+                            <h4>Özellikler</h4>
+                            <div id="facet-attributes"></div>
+                        </div>
+
+                        <div style="margin-top:12px;">
+                            <button class="btn-danger" id="clearFilters">Filtreleri Temizle</button>
+                        </div>
+                    </aside>
+
+                    <!-- Products Grid -->
+                    <div class="products-area">
+                        <!-- Search Bar -->
+                        <div class="search-container">
+                            <input type="text" id="searchInput" placeholder="🔍 Ürün ara..." onkeyup="debouncedSearch(event)">
+                        </div>
+
+                        <div class="products-grid" id="productsGrid">
+                            <!-- Ürünler JS tarafından yüklenecek -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
