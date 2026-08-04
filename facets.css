@@ -1,0 +1,68 @@
+/* facets.css — styles for faceted search panel and responsive layout */
+
+/* Layout wrappers for products page (works with existing style.css) */
+.products-layout { display: block; }
+.products-main { display: flex; gap: 24px; align-items: flex-start; }
+
+/* Facet panel */
+.facets-panel {
+  width: 260px;
+  min-width: 220px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(14,30,37,0.08);
+  border: 1px solid rgba(0,0,0,0.04);
+  height: fit-content;
+  position: sticky;
+  top: 88px; /* below header */
+  align-self: flex-start;
+  animation: slideIn 0.35s ease-out;
+}
+
+.facets-panel h3 { font-size: 18px; margin-bottom: 12px; color: var(--text-color); }
+.facets-section { margin-bottom: 12px; }
+.facets-section h4 { font-size: 14px; margin-bottom: 8px; color: var(--primary-color); }
+
+/* Attribute groups */
+.attr-group { margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed rgba(0,0,0,0.03); }
+.attr-group h5 { font-size: 13px; margin: 6px 0; color: var(--text-color); }
+.attr-group label { display: block; font-size: 13px; color: var(--light-text); margin: 6px 0; cursor: pointer; }
+.attr-group input[type="checkbox"] { margin-right: 8px; }
+
+/* Facet counts */
+.facet-count { color: var(--secondary-color); font-weight: 700; margin-left: 6px; }
+
+/* Price inputs */
+.price-range { display: flex; gap: 8px; align-items: center; }
+.price-range input[type="number"] { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border-color); }
+#priceApply { padding: 8px 10px; }
+
+/* Small helper styles */
+#clearFilters { width: 100%; }
+
+/* Products area shrink to allow side panel */
+.products-area { flex: 1; }
+.products-area .search-container { margin-bottom: 18px; }
+.products-grid { margin-top: 12px; }
+
+/* Mobile responsive: move facets above products and collapsible */
+@media (max-width: 900px) {
+  .products-main { flex-direction: column; }
+  .facets-panel { position: relative; top: 0; width: 100%; min-width: auto; order: 1; }
+  .products-area { order: 2; }
+}
+
+/* Very small: collapse facets into a toggle */
+@media (max-width: 520px) {
+  .facets-panel { display: none; }
+  .facets-toggle { display: block; margin-bottom: 12px; }
+}
+
+/* Accessible focus for facet controls */
+.facets-panel input[type="checkbox"]:focus + .facet-count,
+.facets-panel input[type="number"]:focus { outline: 2px solid rgba(0,123,255,0.12); }
+
+/* Subtle animations for counts */
+.facet-count { transition: transform 120ms ease-out; }
+.facet-count.updated { transform: scale(1.04); }
