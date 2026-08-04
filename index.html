@@ -6,6 +6,7 @@
     <title>TechStore - Premium E-Ticaret Sitesi</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="facets.css">
+    <link rel="stylesheet" href="animations.css">
 </head>
 <body>
     <!-- Header -->
@@ -32,6 +33,8 @@
                 <p>En iyi teknoloji ürünleri ile hayatınızı kolaylaştırın</p>
                 <button class="btn-primary" onclick="showPage('products')">🛍️ Alışverişe Başla</button>
             </div>
+            <!-- Lottie animation container (ultra max visual) -->
+            <div id="heroLottie" aria-hidden="true" style="position:absolute; right:8%; top:20%; width:240px; height:240px; pointer-events:none;"></div>
         </section>
 
         <!-- Features Section -->
@@ -442,5 +445,10 @@
     </footer>
 
     <script src="script.js"></script>
+    <!-- GSAP for advanced animations (CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-KrJ8pBWSX63qgk4oK0cB1g3T5F3lF6f2G3m1bslzJcZ+TL3oQ8hY3zv1Q/3R7JfOq9wWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Lottie for hero animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js" integrity="sha512-KqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="animations.js"></script>
 </body>
 </html>
