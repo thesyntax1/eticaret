@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechStore - Premium E-Ticaret Sitesi</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="facets.css">
 </head>
 <body>
     <!-- Header -->
@@ -162,6 +163,9 @@
 
                     <!-- Products Grid -->
                     <div class="products-area">
+                        <!-- Facets toggle for small screens -->
+                        <button class="facets-toggle btn-secondary" id="facetsToggle" aria-expanded="false" style="display:none;">Filtreleri Göster</button>
+
                         <!-- Search Bar -->
                         <div class="search-container">
                             <input type="text" id="searchInput" placeholder="🔍 Ürün ara..." onkeyup="debouncedSearch(event)">
