@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İstek Listesi - TechStore</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo" onclick="location.href='index.html'">🛍️ TechStore</div>
+            <nav class="navbar">
+                <a href="index.html">🏠 Ana Sayfa</a>
+                <a href="products.html">🛒 Ürünler</a>
+                <a href="wishlist.html">❤️ İstek Listesi</a>
+                <a href="blog.html">📝 Blog</a>
+                <a href="faqs.html">❓ SSS</a>
+                <a class="cart-link" onclick="openCart()">🛒 Sepet <span class="cart-count">0</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Wishlist Section -->
+    <section class="wishlist-section">
+        <div class="container">
+            <h1>❤️ İstek Listesi</h1>
+            <p class="wishlist-subtitle">İstediğiniz ürünleri kaydedin</p>
+            
+            <div class="wishlist-grid" id="wishlistGrid">
+                <!-- İstek listesi öğeleri buraya yüklenecek -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 TechStore. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <script>
+        let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+        function addToWishlist(productId) {
+            if (!wishlist.includes(productId)) {
+                wishlist.push(productId);
+                localStorage.setItem('wishlist', JSON.stringify(wishlist));
+                alert('❤️ Ürün istek listesine eklendi!');
+            } else {
+                alert('✅ Ürün zaten istek listesinde!');
+            }
+        }
+
+        function removeFromWishlist(productId) {
+            wishlist = wishlist.filter(id => id !== productId);
+            localStorage.setItem('wishlist', JSON.stringify(wishlist));
+            location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadWishlist();
+        });
+
+        function loadWishlist() {
+            const wishlistGrid = document.getElementById('wishlistGrid');
+            if (wishlist.length === 0) {
+                wishlistGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 60px; font-size: 18px;">İstek listesi boş 😢</p>';
+                return;
+            }
+            // Wishlist öğelerini yükle
+        }
+    </script>
+</body>
+</html>

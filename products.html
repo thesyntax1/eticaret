@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ürünler - TechStore</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo" onclick="location.href='index.html'">🛍️ TechStore</div>
+            <nav class="navbar">
+                <a href="index.html">🏠 Ana Sayfa</a>
+                <a href="products.html">🛒 Ürünler</a>
+                <a href="blog.html">📝 Blog</a>
+                <a href="faqs.html">❓ SSS</a>
+                <a href="promotions.html">🎁 Promosyonlar</a>
+                <a class="cart-link" onclick="openCart()">🛒 Sepet <span class="cart-count">0</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Products Page -->
+    <section class="products">
+        <div class="container">
+            <h1>🛍️ Ürün Kataloğu</h1>
+            
+            <div class="filter-section">
+                <div class="price-filter">
+                    <h3>💰 Fiyat Aralığı</h3>
+                    <input type="range" min="0" max="3000" value="3000" id="priceRange" oninput="filterByPrice()">
+                    <p>Maksimum: ₺<span id="priceValue">3000</span></p>
+                </div>
+                
+                <div class="category-filter">
+                    <button class="category-btn active" onclick="filterByCategory('all')">Tümü</button>
+                    <button class="category-btn" onclick="filterByCategory('electronics')">Elektronikler</button>
+                    <button class="category-btn" onclick="filterByCategory('accessories')">Aksesuarlar</button>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="🔍 Ürün ara..." onkeyup="searchProducts()">
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+                <!-- Ürünler yüklenecek -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCart()">&times;</span>
+            <h2>🛒 Alışveriş Sepeti</h2>
+            <div class="cart-items" id="cartItems"></div>
+            <div class="cart-summary">
+                <h3>Toplam: ₺<span id="totalPrice">0.00</span></h3>
+                <button class="btn-primary" style="width: 100%;" onclick="checkout()">Ödemeye Devam Et</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 TechStore. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Ürün verilerini yükle ve göster
+        document.addEventListener('DOMContentLoaded', () => {
+            displayProducts();
+            updateCartCount();
+        });
+
+        function filterByPrice() {
+            const value = document.getElementById('priceRange').value;
+            document.getElementById('priceValue').textContent = value;
+            displayProducts();
+        }
+
+        function filterByCategory(category) {
+            currentFilter = category;
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            displayProducts();
+        }
+    </script>
+</body>
+</html>

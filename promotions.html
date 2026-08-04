@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promosyonlar - TechStore</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo" onclick="location.href='index.html'">🛍️ TechStore</div>
+            <nav class="navbar">
+                <a href="index.html">🏠 Ana Sayfa</a>
+                <a href="products.html">🛒 Ürünler</a>
+                <a href="blog.html">📝 Blog</a>
+                <a href="faqs.html">❓ SSS</a>
+                <a href="promotions.html">🎁 Promosyonlar</a>
+                <a href="index.html" class="cart-link">🛒 Sepet <span class="cart-count">0</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Promotions Section -->
+    <section class="promotions-section">
+        <div class="container">
+            <h1>🎁 Özel Promosyonlar</h1>
+            <p class="promo-subtitle">Sınırlı süreli inanılmaz indirimler</p>
+            
+            <!-- Flash Sale -->
+            <div class="flash-sale">
+                <div class="flash-content">
+                    <h2>⚡ FLASH SALE!</h2>
+                    <p>Bugün sadece 24 saat boyunca</p>
+                    <div class="countdown">
+                        <div class="timer-item">
+                            <div class="timer-value" id="hours">18</div>
+                            <div class="timer-label">Saat</div>
+                        </div>
+                        <div class="timer-item">
+                            <div class="timer-value" id="minutes">45</div>
+                            <div class="timer-label">Dakika</div>
+                        </div>
+                        <div class="timer-item">
+                            <div class="timer-value" id="seconds">32</div>
+                            <div class="timer-label">Saniye</div>
+                        </div>
+                    </div>
+                    <button class="btn-primary">Alışverişe Başla</button>
+                </div>
+                <div class="flash-image">🔥</div>
+            </div>
+
+            <!-- Promotion Cards -->
+            <div class="promo-grid">
+                <div class="promo-card">
+                    <div class="promo-badge">-35%</div>
+                    <div class="promo-image">🎧</div>
+                    <h3>Wireless Headphones</h3>
+                    <p class="original-price">₺1299.99</p>
+                    <p class="sale-price">₺844.99</p>
+                    <p class="promo-description">Premium ses kalitesi ve gürültü engelleme</p>
+                    <button class="btn-primary" onclick="alert('Ürün sepete eklendi!')">Sepete Ekle</button>
+                </div>
+
+                <div class="promo-card">
+                    <div class="promo-badge">-40%</div>
+                    <div class="promo-image">⌚</div>
+                    <h3>Smart Watch</h3>
+                    <p class="original-price">₺2499.99</p>
+                    <p class="sale-price">₺1499.99</p>
+                    <p class="promo-description">Sağlık takibi ve akıllı bildirimler</p>
+                    <button class="btn-primary" onclick="alert('Ürün sepete eklendi!')">Sepete Ekle</button>
+                </div>
+
+                <div class="promo-card">
+                    <div class="promo-badge">-25%</div>
+                    <div class="promo-image">⌨️</div>
+                    <h3>Mechanical Keyboard</h3>
+                    <p class="original-price">₺1999.99</p>
+                    <p class="sale-price">₺1499.99</p>
+                    <p class="promo-description">RGB aydınlatma ve mekanik anahtarlar</p>
+                    <button class="btn-primary" onclick="alert('Ürün sepete eklendi!')">Sepete Ekle</button>
+                </div>
+
+                <div class="promo-card">
+                    <div class="promo-badge">-30%</div>
+                    <div class="promo-image">💻</div>
+                    <h3>USB-C Hub</h3>
+                    <p class="original-price">₺899.99</p>
+                    <p class="sale-price">₺629.99</p>
+                    <p class="promo-description">Çoklu port desteği ve yüksek hız</p>
+                    <button class="btn-primary" onclick="alert('Ürün sepete eklendi!')">Sepete Ekle</button>
+                </div>
+
+                <div class="promo-card">
+                    <div class="promo-badge">-45%</div>
+                    <div class="promo-image">📱</div>
+                    <h3>Phone Stand</h3>
+                    <p class="original-price">₺299.99</p>
+                    <p class="sale-price">₺164.99</p>
+                    <p class="promo-description">Ayarlanabilir ve taşınabilir stand</p>
+                    <button class="btn-primary" onclick="alert('Ürün sepete eklendi!')">Sepete Ekle</button>
+                </div>
+
+                <div class="promo-card">
+                    <div class="promo-badge">-20%</div>
+                    <div class="promo-image">💾</div>
+                    <h3>Portable SSD</h3>
+                    <p class="original-price">₺2199.99</p>
+                    <p class="sale-price">₺1759.99</p>
+                    <p class="promo-description">1TB hızlı depolama çözümü</p>
+                    <button class="btn-primary" onclick="alert('Ürün sepete eklendi!')">Sepete Ekle</button>
+                </div>
+            </div>
+
+            <!-- Discount Code Section -->
+            <div class="discount-section">
+                <h2>💝 İndirim Kodlarınız</h2>
+                <div class="discount-codes">
+                    <div class="discount-code">
+                        <div class="code-info">
+                            <h3>TECHSAVE20</h3>
+                            <p>Tüm ürünlerde %20 indirim</p>
+                            <span class="code-expiry">Son tarih: 31.01.2024</span>
+                        </div>
+                        <button class="btn-secondary" onclick="copyCode('TECHSAVE20')">Kopyala</button>
+                    </div>
+
+                    <div class="discount-code">
+                        <div class="code-info">
+                            <h3>WELCOME50</h3>
+                            <p>İlk siparişte 50₺ indirim</p>
+                            <span class="code-expiry">Son tarih: 15.02.2024</span>
+                        </div>
+                        <button class="btn-secondary" onclick="copyCode('WELCOME50')">Kopyala</button>
+                    </div>
+
+                    <div class="discount-code">
+                        <div class="code-info">
+                            <h3>FREESHIP</h3>
+                            <p>500₺ ve üzeri kargo ücretsiz</p>
+                            <span class="code-expiry">Son tarih: 28.02.2024</span>
+                        </div>
+                        <button class="btn-secondary" onclick="copyCode('FREESHIP')">Kopyala</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 TechStore. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyCode(code) {
+            navigator.clipboard.writeText(code);
+            alert('✅ ' + code + ' kopyalandı!');
+        }
+
+        // Countdown Timer
+        function updateCountdown() {
+            let hours = parseInt(document.getElementById('hours').textContent);
+            let minutes = parseInt(document.getElementById('minutes').textContent);
+            let seconds = parseInt(document.getElementById('seconds').textContent);
+
+            if (seconds > 0) {
+                seconds--;
+            } else if (minutes > 0) {
+                seconds = 59;
+                minutes--;
+            } else if (hours > 0) {
+                minutes = 59;
+                seconds = 59;
+                hours--;
+            } else {
+                document.querySelector('.flash-sale').innerHTML = '<p style="text-align:center; padding:40px;">Promosyon sona erdi!</p>';
+                return;
+            }
+
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
