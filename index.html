@@ -3,52 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Ticaret Sitesi</title>
+    <title>TechStore - Premium E-Ticaret Sitesi</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <div class="logo">🛍️ TechStore</div>
+            <div class="logo" onclick="showPage('home')">🛍️ TechStore</div>
             <nav class="navbar">
-                <a href="#home">Ana Sayfa</a>
-                <a href="#products">Ürünler</a>
-                <a href="#cart" class="cart-link">🛒 Sepet <span class="cart-count">0</span></a>
+                <a onclick="showPage('home')">🏠 Ana Sayfa</a>
+                <a onclick="showPage('products')">🛒 Ürünler</a>
+                <a onclick="showPage('about')">ℹ️ Hakkında</a>
+                <a onclick="showPage('contact')">📞 İletişim</a>
+                <a onclick="showPage('account')">👤 Hesap</a>
+                <a class="cart-link" onclick="openCart()">🛒 Sepet <span class="cart-count">0</span></a>
             </nav>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1>Hoşgeldiniz TechStore'a</h1>
-            <p>En iyi teknoloji ürünleri burada!</p>
-            <button class="btn-primary" onclick="scrollToProducts()">Alışverişe Başla</button>
-        </div>
-    </section>
-
-    <!-- Products Section -->
-    <section class="products" id="products">
-        <div class="container">
-            <h2>Ürünlerimiz</h2>
-            <div class="products-grid" id="productsGrid">
-                <!-- Ürünler JS tarafından yüklenecek -->
+    <!-- Home Page -->
+    <div id="home-page" class="page active">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>🚀 TechStore'a Hoşgeldiniz</h1>
+                <p>En iyi teknoloji ürünleri ile hayatınızı kolaylaştırın</p>
+                <button class="btn-primary" onclick="showPage('products')">🛍️ Alışverişe Başla</button>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-showcase">
+            <div class="container">
+                <h2>Neden Biz?</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Hızlı Teslimat</h3>
+                        <p>24 saat içinde kapınıza ulaşır</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Güvenli Ödeme</h3>
+                        <p>SSL şifreleme ile korunan işlemler</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⭐</div>
+                        <h3>Kaliteli Ürünler</h3>
+                        <p>Sadece en iyi markaları sunuyoruz</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>En İyi Fiyatlar</h3>
+                        <p>Piyasadaki en uygun fiyatlar</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📞</div>
+                        <h3>7/24 Destek</h3>
+                        <p>Her zaman yardımcı olacak ekip</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <h3>Kolay İade</h3>
+                        <p>30 gün içinde ücretsiz iade</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section class="statistics">
+            <div class="container">
+                <div class="stat-card">
+                    <h3>10K+</h3>
+                    <p>Memnun Müşteri</p>
+                </div>
+                <div class="stat-card">
+                    <h3>500+</h3>
+                    <p>Ürün Çeşidi</p>
+                </div>
+                <div class="stat-card">
+                    <h3>50K+</h3>
+                    <p>Tamamlanan Sipariş</p>
+                </div>
+                <div class="stat-card">
+                    <h3>4.9⭐</h3>
+                    <p>Ortalama Puan</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section class="newsletter">
+            <div class="container">
+                <div class="newsletter-content">
+                    <h2>📬 Bültenimize Abone Olun</h2>
+                    <p>Özel teklifler ve yeni ürünlerden haberdar olun</p>
+                    <div class="newsletter-form">
+                        <input type="email" placeholder="E-mail adresinizi girin..." id="newsletterEmail">
+                        <button class="btn-primary" onclick="subscribeNewsletter()">Abone Ol</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Products Page -->
+    <div id="products-page" class="page">
+        <section class="products">
+            <div class="container">
+                <h2>🛍️ Ürünlerimiz</h2>
+                
+                <!-- Category Filter -->
+                <div class="category-filter">
+                    <button class="category-btn active" onclick="filterProducts('all')">Tümü</button>
+                    <button class="category-btn" onclick="filterProducts('electronics')">Elektronikler</button>
+                    <button class="category-btn" onclick="filterProducts('accessories')">Aksesuarlar</button>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="🔍 Ürün ara..." onkeyup="searchProducts()">
+                </div>
+
+                <div class="products-grid" id="productsGrid">
+                    <!-- Ürünler JS tarafından yüklenecek -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- About Page -->
+    <div id="about-page" class="page">
+        <section class="about-section">
+            <div class="about-content">
+                <h1>📖 TechStore Hakkında</h1>
+                <p>
+                    TechStore, 2020 yılından beri teknoloji tutkunlarına en iyi ürünleri sunmaktadır. 
+                    Misyonumuz, kaliteli teknoloji ürünlerini uygun fiyatlarla herkesin erişimine sunmaktır.
+                </p>
+                <p>
+                    Müşteri memnuniyeti bizim en büyük önceliğimiz. Her gün yüzlerce müşteriye hizmet veren 
+                    ekibimiz, en iyi hizmet sunmak için çalışmaktadır.
+                </p>
+                <p>
+                    Ürünlerimiz tüm dünyadan seçilen, orijinal ve garantili ürünlerdir. 
+                    Her ürün kalite kontrol testinden geçtikten sonra müşteriye ulaştırılır.
+                </p>
+                
+                <div class="team-section">
+                    <h2>Ekibimiz</h2>
+                    <div class="team-members">
+                        <div class="team-card">
+                            <div class="team-avatar">👨‍💼</div>
+                            <h3>Ahmet Demir</h3>
+                            <p>CEO & Kurucu</p>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-avatar">👩‍💼</div>
+                            <h3>Ayşe Yılmaz</h3>
+                            <p>Operasyon Müdürü</p>
+                        </div>
+                        <div class="team-card">
+                            <div class="team-avatar">👨‍💻</div>
+                            <h3>Can Kaya</h3>
+                            <p>Teknoloji Direktörü</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Contact Page -->
+    <div id="contact-page" class="page">
+        <section class="contact-section">
+            <div class="contact-container">
+                <h1>📞 Bize Ulaşın</h1>
+                <div class="contact-info">
+                    <div class="info-card">
+                        <h3>📍 Adres</h3>
+                        <p>Teknoloji Caddesi No:42<br>34000 İstanbul, Türkiye</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>📱 Telefon</h3>
+                        <p>+90 212 XXX XX XX<br>+90 532 XXX XX XX</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>📧 Email</h3>
+                        <p>info@techstore.com<br>destek@techstore.com</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>🕐 Çalışma Saatleri</h3>
+                        <p>Pazartesi - Cuma: 09:00 - 18:00<br>Cumartesi: 10:00 - 16:00</p>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <h2>Mesaj Gönder</h2>
+                    <form onsubmit="sendMessage(event)">
+                        <div class="form-group">
+                            <label>Ad Soyad</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Konu</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mesaj</label>
+                            <textarea rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Gönder</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Account Page -->
+    <div id="account-page" class="page">
+        <section class="account-section">
+            <div class="account-container">
+                <h1>👤 Hesaplarım</h1>
+                
+                <div class="account-tabs">
+                    <button class="tab-btn active" onclick="showTab('profile')">Profil</button>
+                    <button class="tab-btn" onclick="showTab('orders')">Siparişlerim</button>
+                    <button class="tab-btn" onclick="showTab('settings')">Ayarlar</button>
+                </div>
+
+                <!-- Profile Tab -->
+                <div id="profile-tab" class="tab-content active">
+                    <div class="account-form">
+                        <h2>Profil Bilgileri</h2>
+                        <form>
+                            <div class="form-group">
+                                <label>Ad Soyad</label>
+                                <input type="text" value="Ziyaretçi" id="profileName">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" value="ziyaretci@example.com" id="profileEmail">
+                            </div>
+                            <div class="form-group">
+                                <label>Telefon</label>
+                                <input type="tel" value="+90 532 XXX XX XX" id="profilePhone">
+                            </div>
+                            <div class="form-group">
+                                <label>Adres</label>
+                                <textarea id="profileAddress">İstanbul, Türkiye</textarea>
+                            </div>
+                            <button type="button" class="btn-primary" onclick="saveProfile()">Kaydet</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Orders Tab -->
+                <div id="orders-tab" class="tab-content">
+                    <div class="order-history">
+                        <h2>Geçmiş Siparişler</h2>
+                        <div id="ordersList">
+                            <!-- Siparişler JS tarafından yüklenecek -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-content">
+                    <div class="account-form">
+                        <h2>Hesap Ayarları</h2>
+                        <div class="settings-group">
+                            <h3>Bildirimler</h3>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" checked> Email bildirimleri</label>
+                                <label><input type="checkbox" checked> SMS bildirimleri</label>
+                                <label><input type="checkbox"> Pazarlama emailleri</label>
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <h3>Güvenlik</h3>
+                            <button class="btn-secondary" onclick="changePassword()">Şifreyi Değiştir</button>
+                        </div>
+                        <div class="settings-group">
+                            <h3>Tehlikeli Bölge</h3>
+                            <button class="btn-danger" onclick="deleteAccount()">Hesabı Sil</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <!-- Cart Modal -->
     <div class="modal" id="cartModal">
         <div class="modal-content">
             <span class="close" onclick="closeCart()">&times;</span>
-            <h2>Alışveriş Sepeti</h2>
+            <h2>🛒 Alışveriş Sepeti</h2>
             <div class="cart-items" id="cartItems">
                 <!-- Sepet öğeleri buraya yüklenecek -->
             </div>
             <div class="cart-summary">
-                <h3>Toplam: ₺<span id="totalPrice">0</span></h3>
-                <button class="btn-primary" onclick="checkout()">Ödemeye Devam Et</button>
+                <h3>Toplam: ₺<span id="totalPrice">0.00</span></h3>
+                <button class="btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="checkout()">Ödemeye Devam Et</button>
+                <button class="btn-secondary" style="width: 100%;" onclick="closeCart()">Alışverişe Devam Et</button>
             </div>
         </div>
     </div>
@@ -57,27 +320,31 @@
     <div class="modal" id="checkoutModal">
         <div class="modal-content checkout-form">
             <span class="close" onclick="closeCheckout()">&times;</span>
-            <h2>Ödeme İşlemi</h2>
+            <h2>💳 Ödeme İşlemi</h2>
             <form onsubmit="completeOrder(event)">
                 <div class="form-group">
-                    <label>Ad Soyad</label>
+                    <label>👤 Ad Soyad</label>
                     <input type="text" required>
                 </div>
                 <div class="form-group">
-                    <label>Email</label>
+                    <label>📧 Email</label>
                     <input type="email" required>
                 </div>
                 <div class="form-group">
-                    <label>Adres</label>
+                    <label>📍 Adres</label>
                     <textarea required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Kart Numarası</label>
+                    <label>📱 Telefon</label>
+                    <input type="tel" required>
+                </div>
+                <div class="form-group">
+                    <label>💳 Kart Numarası</label>
                     <input type="text" placeholder="1234 5678 9012 3456" required>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Expiry</label>
+                        <label>Son Kullanma Tarihi</label>
                         <input type="text" placeholder="MM/YY" required>
                     </div>
                     <div class="form-group">
@@ -85,10 +352,48 @@
                         <input type="text" placeholder="123" required>
                     </div>
                 </div>
-                <button type="submit" class="btn-primary">Siparişi Tamamla</button>
+                <button type="submit" class="btn-primary" style="width: 100%;">Siparişi Tamamla</button>
             </form>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>🛍️ TechStore</h3>
+                    <p>Teknoloji tutkunları için en iyi çözüm</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Hızlı Linkler</h4>
+                    <ul>
+                        <li><a onclick="showPage('home')">Ana Sayfa</a></li>
+                        <li><a onclick="showPage('products')">Ürünler</a></li>
+                        <li><a onclick="showPage('about')">Hakkında</a></li>
+                        <li><a onclick="showPage('contact')">İletişim</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Bize Takip Edin</h4>
+                    <div class="social-links">
+                        <a href="#">Facebook</a>
+                        <a href="#">Twitter</a>
+                        <a href="#">Instagram</a>
+                        <a href="#">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 TechStore. Tüm hakları saklıdır.</p>
+                <div class="footer-links">
+                    <a href="#">Gizlilik Politikası</a>
+                    <a href="#">Kullanım Şartları</a>
+                    <a href="#">İade Politikası</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
