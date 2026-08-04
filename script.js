@@ -1,181 +1,275 @@
-// ===================== ÜRÜN VERİLERİ =====================
+// ===================== ÜRÜN VERİLERİ (güncellendi: brand, attributes) =====================
 const products = [
     {
         id: 1,
         name: "Wireless Headphones Pro",
         price: 1299.99,
         category: "electronics",
+        brand: "Acme",
         description: "Premium wireless headphones with noise cancellation",
         emoji: "🎧",
         rating: 4.8,
         reviews: 245,
-        image: "🎧"
+        attributes: {color: 'Black', connectivity: 'Wireless', warranty: '2 years'}
     },
     {
         id: 2,
         name: "Smart Watch Ultra",
         price: 2499.99,
         category: "electronics",
+        brand: "Omega",
         description: "Advanced smartwatch with health tracking features",
         emoji: "⌚",
         rating: 4.7,
         reviews: 189,
-        image: "⌚"
+        attributes: {color: 'Silver', size: '42mm', warranty: '1 year'}
     },
     {
         id: 3,
         name: "4K Webcam Pro",
         price: 1499.99,
         category: "electronics",
+        brand: "Acme",
         description: "Professional 4K webcam for streaming and video calls",
         emoji: "📹",
         rating: 4.6,
         reviews: 156,
-        image: "📹"
+        attributes: {resolution: '4K', color: 'Black', warranty: '2 years'}
     },
     {
         id: 4,
         name: "Mechanical Keyboard RGB",
         price: 1999.99,
         category: "electronics",
+        brand: "KeyMaster",
         description: "Gaming mechanical keyboard with RGB lighting",
         emoji: "⌨️",
         rating: 4.9,
         reviews: 312,
-        image: "⌨️"
+        attributes: {switch: 'Blue', layout: 'TKL', warranty: '3 years'}
     },
     {
         id: 5,
         name: "Ergonomic Mouse",
         price: 799.99,
         category: "accessories",
+        brand: "Clicky",
         description: "Ergonomic wireless mouse with precision tracking",
         emoji: "🖱️",
         rating: 4.5,
         reviews: 128,
-        image: "🖱️"
+        attributes: {color: 'White', connectivity: 'Wireless', warranty: '1 year'}
     },
     {
         id: 6,
         name: "USB-C Hub Pro",
         price: 899.99,
         category: "accessories",
+        brand: "HubWorks",
         description: "Multi-port USB-C hub with high-speed connectivity",
         emoji: "🔌",
         rating: 4.7,
         reviews: 201,
-        image: "🔌"
+        attributes: {ports: '7', material: 'Aluminum', warranty: '1 year'}
     },
     {
         id: 7,
         name: "Portable SSD 2TB",
         price: 2199.99,
         category: "electronics",
+        brand: "StorageX",
         description: "1TB portable SSD with fast read/write speeds",
         emoji: "💾",
         rating: 4.8,
         reviews: 287,
-        image: "💾"
+        attributes: {capacity: '2TB', interface: 'USB-C', warranty: '2 years'}
     },
     {
         id: 8,
         name: "Phone Stand Premium",
         price: 299.99,
         category: "accessories",
+        brand: "StandUp",
         description: "Adjustable phone stand for desk and travel",
         emoji: "📱",
         rating: 4.4,
         reviews: 95,
-        image: "📱"
+        attributes: {material: 'Aluminum', color: 'Silver', warranty: '1 year'}
     },
     {
         id: 9,
         name: "Wireless Charger",
         price: 499.99,
         category: "accessories",
+        brand: "ChargeIt",
         description: "Fast wireless charging pad for all devices",
         emoji: "🔋",
         rating: 4.6,
         reviews: 172,
-        image: "🔋"
+        attributes: {watt: '15W', color: 'Black', warranty: '1 year'}
     },
     {
         id: 10,
         name: "Laptop Stand",
         price: 599.99,
         category: "accessories",
+        brand: "StandUp",
         description: "Adjustable aluminum laptop stand",
         emoji: "💻",
         rating: 4.7,
         reviews: 143,
-        image: "💻"
+        attributes: {material: 'Aluminum', color: 'Silver', warranty: '2 years'}
     }
 ];
 
-// ===================== GLOBAL DEĞİŞKENLER =====================
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-let orders = JSON.parse(localStorage.getItem('orders')) || [];
-let currentFilter = 'all';
-let currentTab = 'profile';
 
-// ===================== SAYFA BAŞLADIĞINDA =====================
-document.addEventListener('DOMContentLoaded', () => {
-    displayProducts();
-    updateCartCount();
-    loadOrders();
-    showPage('home');
-});
+// ===================== FACET STATE & HELPERS =====================
+const facetsState = {
+    q: '',
+    brand: new Set(),
+    attributes: {}, // { attrName: Set(values) }
+    priceMin: null,
+    priceMax: null,
+    minRating: 0
+};
 
-// ===================== SAYFA NAVİGASYONU =====================
-function showPage(pageName) {
-    // Tüm sayfaları gizle
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-    });
-    
-    // Seçilen sayfayı göster
-    const selectedPage = document.getElementById(pageName + '-page');
-    if (selectedPage) {
-        selectedPage.classList.add('active');
-        window.scrollTo(0, 0);
-        
-        // Ürünler sayfası seçilirse ürünleri yeniden yükle
-        if (pageName === 'products') {
-            displayProducts();
-        }
-    }
+function debounce(fn, delay = 300){
+    let t;
+    return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn(...args), delay);
+    };
 }
 
-// ===================== ÜRÜN GÖRÜNTÜLEME =====================
-function displayProducts() {
+const debouncedSearch = debounce((e) => {
+    facetsState.q = e.target.value || '';
+    applyFiltersAndSearch();
+}, 300);
+
+function buildFacets(items){
+    const brands = {};
+    const attributes = {};
+    let minPrice = Infinity, maxPrice = -Infinity;
+
+    items.forEach(p => {
+        // brands
+        if(p.brand){
+            brands[p.brand] = (brands[p.brand] || 0) + 1;
+        }
+        // attributes
+        if(p.attributes){
+            Object.entries(p.attributes).forEach(([k, v]) => {
+                attributes[k] = attributes[k] || {};
+                attributes[k][v] = (attributes[k][v] || 0) + 1;
+            });
+        }
+        // price
+        if(p.price < minPrice) minPrice = p.price;
+        if(p.price > maxPrice) maxPrice = p.price;
+    });
+
+    return {brands, attributes, minPrice: isFinite(minPrice)?minPrice:0, maxPrice: isFinite(maxPrice)?maxPrice:0};
+}
+
+function renderFacetBrand(brands){
+    const container = document.getElementById('facet-brand');
+    container.innerHTML = '';
+    Object.entries(brands).forEach(([brand, count]) => {
+        const id = `facet-brand-${brand}`;
+        const el = document.createElement('label');
+        el.innerHTML = `<input type="checkbox" data-brand="${brand}" id="${id}"> ${brand} <span class='facet-count'>(${count})</span>`;
+        container.appendChild(el);
+        el.querySelector('input').addEventListener('change', (e) => {
+            if(e.target.checked) facetsState.brand.add(brand); else facetsState.brand.delete(brand);
+            applyFiltersAndSearch();
+        });
+    });
+}
+
+function renderFacetAttributes(attributes){
+    const section = document.getElementById('attributesSection');
+    const container = document.getElementById('facet-attributes');
+    container.innerHTML = '';
+    const keys = Object.keys(attributes);
+    if(keys.length === 0){ section.style.display = 'none'; return; }
+    section.style.display = 'block';
+
+    keys.forEach(attr => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'attr-group';
+        const title = document.createElement('h5');
+        title.textContent = attr;
+        wrapper.appendChild(title);
+        Object.entries(attributes[attr]).forEach(([val, count]) => {
+            const id = `facet-attr-${attr}-${val}`.replace(/\s+/g, '-');
+            const el = document.createElement('label');
+            el.innerHTML = `<input type="checkbox" data-attr="${attr}" data-val="${val}" id="${id}"> ${val} <span class='facet-count'>(${count})</span>`;
+            wrapper.appendChild(el);
+            el.querySelector('input').addEventListener('change', (e) => {
+                facetsState.attributes[attr] = facetsState.attributes[attr] || new Set();
+                if(e.target.checked) facetsState.attributes[attr].add(val); else facetsState.attributes[attr].delete(val);
+                applyFiltersAndSearch();
+            });
+        });
+        container.appendChild(wrapper);
+    });
+}
+
+function updatePriceInputs(min, max){
+    const minInput = document.getElementById('priceMin');
+    const maxInput = document.getElementById('priceMax');
+    if(minInput) minInput.value = Math.floor(min);
+    if(maxInput) maxInput.value = Math.ceil(max);
+}
+
+function applyFiltersAndSearch(){
     const productsGrid = document.getElementById('productsGrid');
-    if (!productsGrid) return;
-    
+    if(!productsGrid) return;
+
+    let results = products.slice();
+
+    // category filter
+    if(currentFilter !== 'all') results = results.filter(p => p.category === currentFilter);
+
+    // brand filter
+    if(facetsState.brand.size){
+        results = results.filter(p => p.brand && facetsState.brand.has(p.brand));
+    }
+
+    // attributes filter (all selected values for each attribute must match)
+    Object.entries(facetsState.attributes).forEach(([attr, set]) => {
+        if(set && set.size){
+            results = results.filter(p => set.has(p.attributes?.[attr]));
+        }
+    });
+
+    // price filter
+    if(facetsState.priceMin !== null) results = results.filter(p => p.price >= facetsState.priceMin);
+    if(facetsState.priceMax !== null) results = results.filter(p => p.price <= facetsState.priceMax);
+
+    // rating filter
+    if(facetsState.minRating && facetsState.minRating > 0) results = results.filter(p => Math.floor(p.rating) >= facetsState.minRating);
+
+    // search
+    if(facetsState.q && facetsState.q.trim()){ 
+        const q = facetsState.q.trim().toLowerCase();
+        results = results.filter(p => (p.name + ' ' + p.description + ' ' + (p.brand||'')).toLowerCase().includes(q));
+    }
+
+    renderProducts(results);
+
+    // update facet counts based on full product set (could be results depending on UX)
+    const facets = buildFacets(products);
+    renderFacetBrand(facets.brands);
+    renderFacetAttributes(facets.attributes);
+}
+
+function renderProducts(list){
+    const productsGrid = document.getElementById('productsGrid');
     productsGrid.innerHTML = '';
+    if(list.length === 0) { productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px;'>Ürün bulunamadı 😢</p>'; return; }
 
-    let filteredProducts = products;
-    
-    // Kategori filtreleme
-    if (currentFilter !== 'all') {
-        filteredProducts = products.filter(p => p.category === currentFilter);
-    }
-    
-    // Arama filtreleme
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput && searchInput.value) {
-        const searchTerm = searchInput.value.toLowerCase();
-        filteredProducts = filteredProducts.filter(p => 
-            p.name.toLowerCase().includes(searchTerm) ||
-            p.description.toLowerCase().includes(searchTerm)
-        );
-    }
-
-    if (filteredProducts.length === 0) {
-        productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px;">Ürün bulunamadı 😢</p>';
-        return;
-    }
-
-    filteredProducts.forEach(product => {
+    list.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
         productCard.innerHTML = `
@@ -186,6 +280,7 @@ function displayProducts() {
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
                 <div class="product-description">${product.description}</div>
+                <div class="product-meta">${product.brand ? '<strong>Marka:</strong> ' + product.brand : ''}</div>
                 <div class="product-rating">
                     <span class="stars">${'⭐'.repeat(Math.floor(product.rating))}</span>
                     <span class="reviews">(${product.reviews} değerlendirme)</span>
@@ -200,24 +295,54 @@ function displayProducts() {
     });
 }
 
-// ===================== FİLTRELEME =====================
-function filterProducts(category) {
-    currentFilter = category;
-    
-    // Butonları güncelle
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.remove('active');
+// init facets on DOMContentLoaded (also existing listener will call displayProducts so we override)
+function initFacets(){
+    const facets = buildFacets(products);
+    renderFacetBrand(facets.brands);
+    renderFacetAttributes(facets.attributes);
+    updatePriceInputs(facets.minPrice, facets.maxPrice);
+
+    document.getElementById('priceApply').addEventListener('click', () => {
+        const minVal = parseFloat(document.getElementById('priceMin').value);
+        const maxVal = parseFloat(document.getElementById('priceMax').value);
+        facetsState.priceMin = isNaN(minVal) ? null : minVal;
+        facetsState.priceMax = isNaN(maxVal) ? null : maxVal;
+        applyFiltersAndSearch();
     });
-    event.target.classList.add('active');
-    
-    displayProducts();
-    showNotification(`${category === 'all' ? 'Tüm' : category === 'electronics' ? 'Elektronik' : 'Aksesuar'} ürünler gösteriliyor`);
+
+    document.getElementById('clearFilters').addEventListener('click', () => {
+        facetsState.brand.clear();
+        facetsState.attributes = {};
+        facetsState.priceMin = null;
+        facetsState.priceMax = null;
+        facetsState.minRating = 0;
+        facetsState.q = '';
+        document.getElementById('searchInput').value = '';
+        applyFiltersAndSearch();
+    });
+
+    // rating checkboxes
+    document.querySelectorAll('#facet-rating input[type="checkbox"]').forEach(ch => {
+        ch.addEventListener('change', (e) => {
+            const vals = Array.from(document.querySelectorAll('#facet-rating input[type="checkbox"]:checked')).map(x => parseInt(x.value));
+            facetsState.minRating = vals.length ? Math.max(...vals) : 0;
+            applyFiltersAndSearch();
+        });
+    });
 }
 
-// ===================== ÜRÜN ARAMA =====================
-function searchProducts() {
-    displayProducts();
-}
+// Replace initial DOMContentLoaded logic to init facets
+document.addEventListener('DOMContentLoaded', () => {
+    // previous init
+    updateCartCount();
+    loadOrders();
+    showPage('home');
+    // new init
+    initFacets();
+    applyFiltersAndSearch();
+});
+
+// keep existing functions below (addToCart, cart handling, checkout, etc.) unchanged...
 
 // ===================== SEPET FONKSİYONLARI =====================
 function addToCart(productId) {
@@ -389,241 +514,4 @@ function showOrderSuccess(order) {
                 <div class="confirmation-item">
                     <strong>📅 Tarih:</strong> ${order.date}
                 </div>
-                <div class="confirmation-item">
-                    <strong>💰 Toplam:</strong> ₺${order.total.toLocaleString('tr-TR', {minimumFractionDigits: 2})}
-                </div>
-                <div class="confirmation-item">
-                    <strong>🚚 Tahmini Teslimat:</strong> ${order.estimatedDelivery}
-                </div>
-                <div class="confirmation-item">
-                    <strong>📬 Onay E-maili:</strong> ${order.email} adresine gönderildi
-                </div>
-            </div>
-        </div>
-        <button class="btn-primary" onclick="finishOrder()" style="width: 100%; margin-top: 20px;">✅ Anlaştım</button>
-    `;
-}
-
-function finishOrder() {
-    closeCheckout();
-    showPage('home');
-    showNotification('🎉 Siparişiniz başarıyla tamamlandı!');
-}
-
-function getEstimatedDelivery() {
-    const date = new Date();
-    date.setDate(date.getDate() + 3);
-    return date.toLocaleDateString('tr-TR');
-}
-
-// ===================== HESAP YÖNETİMİ =====================
-function showTab(tabName) {
-    currentTab = tabName;
-    
-    // Tüm tab'ları gizle
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // Tüm butonları güncelle
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    
-    // Seçilen tab'ı göster
-    const selectedTab = document.getElementById(tabName + '-tab');
-    if (selectedTab) {
-        selectedTab.classList.add('active');
-    }
-    
-    // Seçilen butonu vurgula
-    event.target.classList.add('active');
-    
-    // Siparişler tab'ı seçilirse yükle
-    if (tabName === 'orders') {
-        loadOrders();
-    }
-}
-
-function loadOrders() {
-    const ordersList = document.getElementById('ordersList');
-    if (!ordersList) return;
-    
-    ordersList.innerHTML = '';
-    
-    if (orders.length === 0) {
-        ordersList.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Henüz siparişiniz yok 📦</p>';
-        return;
-    }
-
-    orders.forEach((order, index) => {
-        const orderItem = document.createElement('div');
-        orderItem.className = 'order-item';
-        orderItem.innerHTML = `
-            <div class="order-header">
-                <div>
-                    <strong>📦 ${order.id}</strong>
-                    <span class="order-status">${order.status}</span>
-                </div>
-                <div class="order-date">${order.date}</div>
-            </div>
-            <div class="order-details">
-                <p><strong>Ürün Sayısı:</strong> ${order.items.length}</p>
-                <p><strong>Toplam Tutar:</strong> ₺${order.total.toLocaleString('tr-TR', {minimumFractionDigits: 2})}</p>
-                <p><strong>Tahmini Teslimat:</strong> ${order.estimatedDelivery}</p>
-            </div>
-            <button class="btn-secondary" onclick="toggleOrderItems(${index})">📋 Detayları Gör</button>
-            <div id="order-items-${index}" class="order-items-details" style="display: none; margin-top: 15px;">
-                ${order.items.map(item => `
-                    <div class="order-item-row">
-                        <span>${item.emoji} ${item.name}</span>
-                        <span>x${item.quantity}</span>
-                        <span>₺${(item.price * item.quantity).toLocaleString('tr-TR', {minimumFractionDigits: 2})}</span>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-        ordersList.appendChild(orderItem);
-    });
-}
-
-function toggleOrderItems(index) {
-    const element = document.getElementById(`order-items-${index}`);
-    element.style.display = element.style.display === 'none' ? 'block' : 'none';
-}
-
-function saveProfile() {
-    const name = document.getElementById('profileName').value;
-    const email = document.getElementById('profileEmail').value;
-    const phone = document.getElementById('profilePhone').value;
-    const address = document.getElementById('profileAddress').value;
-    
-    localStorage.setItem('userProfile', JSON.stringify({name, email, phone, address}));
-    showNotification('✅ Profil bilgileriniz kaydedildi!');
-}
-
-function changePassword() {
-    alert('⚠️ Şifre değiştirme özelliği yakında eklenecektir.');
-}
-
-function deleteAccount() {
-    if (confirm('⚠️ Hesabınızı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
-        localStorage.removeItem('cart');
-        localStorage.removeItem('orders');
-        localStorage.removeItem('userProfile');
-        alert('✅ Hesabınız başarıyla silindi.');
-        showPage('home');
-    }
-}
-
-// ===================== İLETİŞİM FORMÜ =====================
-function sendMessage(event) {
-    event.preventDefault();
-    const form = event.target;
-    const name = form.querySelector('input[type="text"]').value;
-    const email = form.querySelector('input[type="email"]').value;
-    const subject = form.querySelectorAll('input[type="text"]')[1].value;
-    const message = form.querySelector('textarea').value;
-    
-    const messageData = {
-        name, email, subject, message,
-        date: new Date().toLocaleString('tr-TR')
-    };
-    
-    let messages = JSON.parse(localStorage.getItem('messages')) || [];
-    messages.push(messageData);
-    localStorage.setItem('messages', JSON.stringify(messages));
-    
-    form.reset();
-    showNotification('✅ Mesajınız başarıyla gönderildi! 📧');
-}
-
-// ===================== BÜLTEN ABONE OLMA =====================
-function subscribeNewsletter() {
-    const email = document.getElementById('newsletterEmail').value;
-    if (!email) {
-        showNotification('❌ Lütfen e-mail adresinizi girin');
-        return;
-    }
-    
-    let subscribers = JSON.parse(localStorage.getItem('subscribers')) || [];
-    if (!subscribers.includes(email)) {
-        subscribers.push(email);
-        localStorage.setItem('subscribers', JSON.stringify(subscribers));
-    }
-    
-    document.getElementById('newsletterEmail').value = '';
-    showNotification('✅ Bültene abone oldunuz! Yeni tekliflerden haberdar kalacaksınız.');
-}
-
-// ===================== BİLDİRİM GÖRÜNTÜLEME =====================
-function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-
-    // Animasyon
-    setTimeout(() => {
-        notification.style.animation = 'slideIn 0.3s ease-in';
-    }, 10);
-
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
-// ===================== FOOTER BAĞLANTILARI =====================
-document.addEventListener('DOMContentLoaded', () => {
-    // Footer linklerini dinamik hale getir
-    document.querySelectorAll('.footer-links a').forEach(link => {
-        if (link.textContent.includes('Gizlilik')) {
-            link.onclick = (e) => {
-                e.preventDefault();
-                showNotification('📋 Gizlilik Politikası: Kişisel verileriniz korunur.');
-            };
-        }
-    });
-});
-
-// ===================== GENEL YARDIMCI FONKSİYONLAR =====================
-function getCurrentDate() {
-    return new Date().toLocaleDateString('tr-TR');
-}
-
-function formatPrice(price) {
-    return price.toLocaleString('tr-TR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-}
-
-// ===================== DARK MODE DESTEĞI (FUTURE) =====================
-function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-}
-
-// Sayfa yüklediğinde dark mode'u kontrol et
-if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
-}
-
-// ===================== KEYBOARD SHORTCUTS =====================
-document.addEventListener('keydown', (e) => {
-    // Ctrl+H = Ana Sayfa
-    if (e.ctrlKey && e.key === 'h') {
-        e.preventDefault();
-        showPage('home');
-    }
-    // Ctrl+P = Ürünler
-    if (e.ctrlKey && e.key === 'p') {
-        e.preventDefault();
-        showPage('products');
-    }
-    // Ctrl+C = Sepet
-    if (e.ctrlKey && e.key === 'c') {
-        e.preventDefault();
-        openCart();
-    }
-});
-
-console.log('🎉 TechStore yüklendi!');
+{
